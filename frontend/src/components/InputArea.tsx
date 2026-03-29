@@ -72,7 +72,16 @@ export const InputArea: React.FC = () => {
       const file = selectedFiles[i];
       const fileObj = { file, uploading: true };
       newFiles.push(fileObj);
-      const index = files.length + i;
+    }
+
+    // 先将所有文件添加到状态中，获取它们的起始索引
+    const startIndex = files.length;
+    setFiles((prev) => [...prev, ...newFiles]);
+
+    // 然后逐个上传并更新状态
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      const index = startIndex + i;
 
       try {
         const result = await uploadFile(file);
@@ -84,8 +93,6 @@ export const InputArea: React.FC = () => {
         setFiles((prev) => prev.filter((_, idx) => idx !== index));
       }
     }
-
-    setFiles((prev) => [...prev, ...newFiles]);
   };
 
   const removeFile = (index: number) => {
